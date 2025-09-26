@@ -1,1 +1,73 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { HashRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
 
+// Sample photo data (replace with your own images and text)
+const photos = [
+  { id: 1, title: "Sunset", src: "images/sunset.jpg", description: "A beautiful sunset." },
+  { id: 2, title: "Mountains", src: "images/mountains.jpg", description: "Snowy mountain peaks." },
+  { id: 3, title: "Dog", src: "images/dog.jpg", description: "My adorable dog." }
+];
+
+function Home() {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 grid gap-6 max-w-5xl mx-auto">
+      <h1 className="text-4xl font-bold text-center mb-4">Lucas Huang</h1>
+      <p className="text-center text-lg mb-8">Hi, my name is Lucas Huang, and I like my dog, my photography stuff.</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {photos.map((photo) => (
+          <Link key={photo.id} to={`/photo/${photo.id}`}>
+            <Card className="rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
+              <CardContent className="p-0">
+                <img src={photo.src} alt={photo.title} className="w-full h-64 object-cover" />
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold">{photo.title}</h2>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function PhotoPage() {
+  const { id } = useParams();
+  const photo = photos.find((p) => p.id === parseInt(id));
+  if (!photo) return <p className="text-center mt-10">Photo not found.</p>;
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 max-w-3xl mx-auto">
+      <img src={photo.src} alt={photo.title} className="w-full rounded-2xl shadow-lg mb-4" />
+      <h2 className="text-3xl font-bold mb-2">{photo.title}</h2>
+      <p className="text-lg mb-4">{photo.description}</p>
+      <Link to="/">
+        <Button>Back to Gallery</Button>
+      </Link>
+    </motion.div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/photo/:id" element={<PhotoPage />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+/*
+Deployment tips for GitHub Pages:
+1. Add a "homepage" field in your package.json, e.g., "homepage": "https://<your-username>.github.io/<repo-name>".
+2. Use HashRouter (as included above) so routing works correctly on GitHub Pages.
+3. Build your project with `npm run build`.
+4. Deploy using the gh-pages package or GitHub Actions.
+*/
